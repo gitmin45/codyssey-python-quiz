@@ -1,0 +1,65 @@
+{
+    "best_score": 6,
+    "quizzes": [
+        {
+            "question": "Python에서 화면에 내용을 출력할 때 사용하는 함수는?",
+            "choices": [
+                "input()",
+                "print()",
+                "open()",
+                "type()"
+            ],
+            "answer": 2
+        },
+        {
+            "question": "Python에서 문자열을 나타내는 자료형은?",
+            "choices": [
+                "int",
+                "float",
+                "str",
+                "bool"
+            ],
+            "answer": 3
+        },
+        {
+            "question": "반복문에서 사용하는 키워드는?",
+            "choices": [
+                "if",
+                "for",
+                "def",
+                "class"
+            ],
+            "answer": 2
+        },
+        {
+            "question": "리스트를 만들 때 사용하는 괄호는?",
+            "choices": [
+                "( )",
+                "{ }",
+                "[ ]",
+                "< >"
+            ],
+            "answer": 3
+        },
+        {
+            "question": "Python에서 함수를 정의할 때 사용하는 키워드는?",
+            "choices": [
+                "make",
+                "function",
+                "def",
+                "return"
+            ],
+            "answer": 3
+        },
+        {
+            "question": "Python에서 주석을 나타내는 기호는?",
+            "choices": [
+                "//",
+                "#",
+                "/*",
+                "--"
+            ],
+            "answer": 2
+        }
+    ]
+}
