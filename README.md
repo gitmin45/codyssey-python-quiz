@@ -331,3 +331,18 @@ python3 main.py
 - **프로젝트 유형:** Python 콘솔 기반 객관식 퀴즈 게임
 - **개발 목적:** Python 기초 문법 및 Git/GitHub 활용 실습
 - **GitHub 저장소:** https://github.com/gitmin45/codyssey-python-quiz
+
+## Git Clone 협업 흐름 검증
+
+GitHub 원격 저장소를 별도의 작업 폴더에 Clone하여 Git 협업 흐름을 확인하였다.
+
+- 원격 저장소: https://github.com/gitmin45/codyssey-python-quiz
+- Clone 작업 폴더: codyssey-python-quiz-clone
+- 작업 브랜치: main
+- 원격 저장소 최신 변경사항 가져오기: `git pull origin main`
+- Python 문법 검사: `python3 -m py_compile main.py`
+
+Clone 폴더에서 README 변경사항을 Commit 및 Push하고, 원본 프로젝트 폴더에서 Pull하여 변경사항이 정상적으로 반영되는지 확인하였다.
+
+
+
