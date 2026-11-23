@@ -78,18 +78,41 @@ class QuizGame:
             if not isinstance(data.get("quizzes"), list):
                 raise ValueError("퀴즈 데이터 형식이 올바르지 않습니다.")
 
-            self.best_score = data.get("best_score", 0)
+            best_score = data.get("best_score", 0)
+
+            if type(best_score) is not int or best_score < 0:
+                raise ValueError("최고 점수 데이터가 올바르지 않습니다.")
+
+            self.best_score = best_score
             self.quizzes = []
 
             for item in data["quizzes"]:
                 if not isinstance(item, dict):
                     raise ValueError("퀴즈 항목의 형식이 올바르지 않습니다.")
 
-                quiz = Quiz(
-                    item["question"],
-                    item["choices"],
-                    item["answer"]
-                )
+                question = item.get("question")
+                choices = item.get("choices")
+                answer = item.get("answer")
+
+                # 질문 데이터 검증
+                if not isinstance(question, str) or not question.strip():
+                    raise ValueError("질문 내용이 비어 있거나 올바르지 않습니다.")
+
+                # 선택지 데이터 검증
+                if not isinstance(choices, list) or len(choices) != 4:
+                    raise ValueError("선택지는 반드시 4개여야 합니다.")
+
+                if not all(
+                    isinstance(choice, str) and choice.strip()
+                    for choice in choices
+                ):
+                    raise ValueError("선택지 내용이 비어 있거나 올바르지 않습니다.")
+
+                # 정답 번호 검증
+                if type(answer) is not int or not 1 <= answer <= 4:
+                    raise ValueError("정답 번호는 1부터 4까지의 숫자여야 합니다.")
+
+                quiz = Quiz(question, choices, answer)
                 self.quizzes.append(quiz)
 
             print(f"퀴즈 {len(self.quizzes)}개를 불러왔습니다.")
@@ -230,10 +253,18 @@ class QuizGame:
             ]
         }
 
-        with open(self.state_file, "w", encoding="utf-8") as file:
-            json.dump(data, file, ensure_ascii=False, indent=4)
+        try:
+            with open(self.state_file, "w", encoding="utf-8") as file:
+                json.dump(data, file, ensure_ascii=False, indent=4)
 
-        print("퀴즈 데이터가 저장되었습니다.")
+            print("퀴즈 데이터가 저장되었습니다.")
+
+        except OSError as error:
+            print(f"데이터 파일 저장 중 오류가 발생했습니다: {error}")
+
+        except TypeError as error:
+            print(f"저장할 데이터 형식에 문제가 있습니다: {error}")
+
         
     def play_quiz(self):
         """등록된 퀴즈를 풀고 점수를 계산한다."""
