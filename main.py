@@ -31,21 +31,99 @@ class QuizGame:
     def load_data(self):
         """JSON 파일에서 퀴즈 데이터를 읽어온다."""
 
-        with open(self.state_file, "r", encoding="utf-8") as file:
-            data = json.load(file)
+        # 기본 퀴즈 데이터
+        default_data = {
+            "best_score": 0,
+            "quizzes": [
+                {
+                    "question": "Python에서 화면에 내용을 출력할 때 사용하는 함수는?",
+                    "choices": ["input()", "print()", "open()", "type()"],
+                    "answer": 2
+                },
+                {
+                    "question": "Python에서 문자열을 나타내는 자료형은?",
+                    "choices": ["int", "float", "str", "bool"],
+                    "answer": 3
+                },
+                {
+                    "question": "반복문에서 사용하는 키워드는?",
+                    "choices": ["if", "for", "def", "class"],
+                    "answer": 2
+                },
+                {
+                    "question": "리스트를 만들 때 사용하는 괄호는?",
+                    "choices": ["( )", "{ }", "[ ]", "< >"],
+                    "answer": 3
+                },
+                {
+                    "question": "Python에서 함수를 정의할 때 사용하는 키워드는?",
+                    "choices": ["make", "function", "def", "return"],
+                    "answer": 3
+                },
+                {
+                    "question": "Python에서 주석을 나타내는 기호는?",
+                    "choices": ["//", "#", "/*", "--"],
+                    "answer": 2
+                }
+            ]
+        }
 
-        self.best_score = data.get("best_score", 0)
+        try:
+            with open(self.state_file, "r", encoding="utf-8") as file:
+                data = json.load(file)
 
-        for item in data.get("quizzes", []):
-            quiz = Quiz(
-                item["question"],
-                item["choices"],
-                item["answer"]
-            )
-            self.quizzes.append(quiz)
+            if not isinstance(data, dict):
+                raise ValueError("JSON 데이터 형식이 올바르지 않습니다.")
 
-        print(f"퀴즈 {len(self.quizzes)}개를 불러왔습니다.")
-        print(f"현재 최고 점수: {self.best_score}")
+            if not isinstance(data.get("quizzes"), list):
+                raise ValueError("퀴즈 데이터 형식이 올바르지 않습니다.")
+
+            self.best_score = data.get("best_score", 0)
+            self.quizzes = []
+
+            for item in data["quizzes"]:
+                if not isinstance(item, dict):
+                    raise ValueError("퀴즈 항목의 형식이 올바르지 않습니다.")
+
+                quiz = Quiz(
+                    item["question"],
+                    item["choices"],
+                    item["answer"]
+                )
+                self.quizzes.append(quiz)
+
+            print(f"퀴즈 {len(self.quizzes)}개를 불러왔습니다.")
+            print(f"현재 최고 점수: {self.best_score}")
+
+        except FileNotFoundError:
+            print("데이터 파일이 없습니다. 기본 퀴즈를 생성합니다.")
+            self.best_score = default_data["best_score"]
+            self.quizzes = [
+                Quiz(item["question"], item["choices"], item["answer"])
+                for item in default_data["quizzes"]
+            ]
+            self.save_data()
+
+        except (json.JSONDecodeError, ValueError, KeyError, TypeError) as error:
+            print(f"데이터 파일에 문제가 있습니다: {error}")
+            print("기본 퀴즈 데이터로 초기화합니다.")
+
+            self.best_score = default_data["best_score"]
+            self.quizzes = [
+                Quiz(item["question"], item["choices"], item["answer"])
+                for item in default_data["quizzes"]
+            ]
+            self.save_data()
+
+        except OSError as error:
+            print(f"데이터 파일을 읽을 수 없습니다: {error}")
+            print("기본 퀴즈 데이터로 실행합니다.")
+
+            self.best_score = default_data["best_score"]
+            self.quizzes = [
+                Quiz(item["question"], item["choices"], item["answer"])
+                for item in default_data["quizzes"]
+            ]
     
     def run(self):
         """퀴즈 게임 메뉴를 실행한다."""
@@ -209,5 +287,12 @@ class QuizGame:
         
 
 if __name__ == "__main__":
-    game = QuizGame()
-    game.run()
+    try:
+        game = QuizGame()
+        game.run()
+
+    except KeyboardInterrupt:
+        print("\n\n사용자 요청으로 프로그램을 안전하게 종료합니다.")
+
+    except EOFError:
+        print("\n\n입력이 종료되어 프로그램을 안전하게 종료합니다.")
